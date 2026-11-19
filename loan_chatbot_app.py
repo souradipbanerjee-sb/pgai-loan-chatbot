@@ -13,7 +13,7 @@ import streamlit as st
 
 # Streamlit Community Cloud: the key comes from the app's Secrets settings (never from the repo)
 try:
-    for _k in ("GROQ_API_KEY", "GROQ_MODEL"):
+    for _k in ("GROQ_API_KEY", "GROQ_MODEL", "SHEETS_WEBHOOK_URL", "SHEETS_TOKEN"):
         if _k in st.secrets and not os.environ.get(_k):
             os.environ[_k] = str(st.secrets[_k])
 except Exception:                                 # no secrets file locally -> .env is used
@@ -48,6 +48,10 @@ with st.sidebar:
     with st.expander("Operator view (not shown to customers)"):
         st.write(f"LLM: {'Groq ' + bot.llm.model if bot.llm else 'offline'}")
         st.write(f"Session: `{bot.session_id[:12]}`")
+        sink = bot.repo.sheets
+        st.write("Google Sheets log: " + (f"on, {sink.sent} rows sent, {sink.failed} failed"
+                                          + (f" (last error: {sink.last_error})" if sink.failed else "")
+                                          if sink else "off (SHEETS_WEBHOOK_URL not set)"))
         for d in bot.decisions:
             st.json({k: d[k] for k in ("reference", "probability_decline", "threshold", "decision",
                                        "latency_ms", "decision_latency_ms", "features")})

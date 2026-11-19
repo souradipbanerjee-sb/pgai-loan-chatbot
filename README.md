@@ -22,11 +22,20 @@ XGBoost model (6 features, threshold 0.50) and returns Approve / Decline with ne
    ```toml
    GROQ_API_KEY = "your-groq-api-key"
    GROQ_MODEL = "openai/gpt-oss-20b"
+   SHEETS_WEBHOOK_URL = "https://script.google.com/macros/s/.../exec"
+   SHEETS_TOKEN = "same token as in the Apps Script"
    ```
-4. **Deploy**. Without a key the app still works, using the offline rule-based parser.
+4. **Deploy**. Without a Groq key the app still works, using the offline rule-based parser.
 
-Note: Streamlit Cloud storage is temporary, so `loan_chatbot.db` is wiped when the app
-restarts. For a permanent audit log, point `loan_repository.py` at a hosted database.
+## Audit log in Google Sheets
+Every session event, message (PII-masked), captured field and decision is appended to a
+Google Sheet with tabs `sessions`, `messages`, `field_events` and `decisions`.
+- `google_apps_script.gs` is the receiver: paste it into the sheet (Extensions > Apps Script),
+  set `TOKEN`, and deploy as a Web app (Execute as: Me, Who has access: Anyone).
+- The app posts rows in background batches (every ~1.5 s, 3 retries), so logging never
+  slows the chat. The operator view in the sidebar shows rows sent / failed.
+- The local SQLite file `loan_chatbot.db` is kept as a second copy. On Streamlit Cloud it is
+  temporary, so the Google Sheet is the permanent record.
 
 ## Architecture
 
