@@ -3,6 +3,10 @@ Loan classifier service: wraps the frozen XGBoost model (threshold 0.50).
 
 classify(features) -> {"probability_decline", "decision", "threshold", "model_version", "latency_ms"}
 Model is loaded once at import, so a call takes a few milliseconds.
+
+Uses XGBoost's native Booster (no scikit-learn needed at runtime). The model was trained
+with early stopping: the file holds 140 trees but the model is the first best_iteration+1
+(= 90), exactly what XGBClassifier.predict_proba uses, so scores are identical.
 """
 import json, os, time
 import numpy as np, pandas as pd, xgboost as xgb
@@ -13,12 +17,18 @@ with open(os.path.join(MODELS, "loan_model_config.json")) as fh:
 FEATURES = CONFIG["features"]
 THRESHOLD = float(CONFIG["threshold"])
 MODEL_VERSION = CONFIG["model_version"]
-_model = xgb.XGBClassifier()
-_model.load_model(os.path.join(MODELS, CONFIG["model_file"]))
+_booster = xgb.Booster()
+_booster.load_model(os.path.join(MODELS, CONFIG["model_file"]))
+_TREES = (0, _booster.best_iteration + 1)
 
 
 def _frame(rows):
     return pd.DataFrame(rows, columns=FEATURES).astype("float32")
+
+
+def _predict(rows):
+    """P(DECLINED) for each row."""
+    return _booster.predict(xgb.DMatrix(_frame(rows)), iteration_range=_TREES)
 
 
 def classify(features: dict) -> dict:
@@ -27,7 +37,7 @@ def classify(features: dict) -> dict:
     if missing:
         raise ValueError(f"Missing features: {missing}")
     t0 = time.perf_counter()
-    p = float(_model.predict_proba(_frame([[features[f] for f in FEATURES]]))[0, 1])
+    p = float(_predict([[features[f] for f in FEATURES]])[0])
     return {"probability_decline": round(p, 4),
             "decision": "DECLINED" if p >= THRESHOLD else "APPROVED",
             "threshold": THRESHOLD, "model_version": MODEL_VERSION,
@@ -43,7 +53,7 @@ def counter_offer(features: dict, vehicle_price: float, min_ltv: float = 40.0, s
     for ltv in ltvs:
         f = dict(features, LTV=float(ltv), Loan_Amount=float(vehicle_price * ltv / 100))
         rows.append([f[k] for k in FEATURES])
-    probs = _model.predict_proba(_frame(rows))[:, 1]
+    probs = _predict(rows)
     for ltv, p in zip(ltvs, probs):
         if p < THRESHOLD:
             loan = int(round(vehicle_price * ltv / 100, -2))
