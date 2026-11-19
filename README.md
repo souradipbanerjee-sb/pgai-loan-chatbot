@@ -13,6 +13,21 @@ XGBoost model (6 features, threshold 0.50) and returns Approve / Decline with ne
 ```
 `--offline` (CLI / tests) runs without Groq. The key lives in `.env` (`GROQ_API_KEY`, `GROQ_MODEL`).
 
+## Deploy on Streamlit Community Cloud
+1. Go to https://share.streamlit.io and sign in with GitHub.
+2. **Create app** → **Deploy a public app from GitHub**:
+   repository `souradipbanerjee-sb/pgai-loan-chatbot`, branch `main`,
+   main file path `loan_chatbot_app.py`.
+3. **Advanced settings** → Python 3.12, and paste into **Secrets**:
+   ```toml
+   GROQ_API_KEY = "your-groq-api-key"
+   GROQ_MODEL = "openai/gpt-oss-20b"
+   ```
+4. **Deploy**. Without a key the app still works, using the offline rule-based parser.
+
+Note: Streamlit Cloud storage is temporary, so `loan_chatbot.db` is wiped when the app
+restarts. For a permanent audit log, point `loan_repository.py` at a hosted database.
+
 ## Architecture
 
 ```
