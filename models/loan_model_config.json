@@ -1,0 +1,53 @@
+{
+  "model_file": "loan_xgb_t050.json",
+  "model_version": "loan_xgb_v1_t050",
+  "created": "2026-11-19",
+  "threshold": 0.5,
+  "positive_class": "DECLINED",
+  "features": [
+    "LTV",
+    "PAST_LOANS_ACTIVE",
+    "Age",
+    "Product_Code_MC",
+    "Loan_Amount",
+    "Net_salary"
+  ],
+  "valid_ranges": {
+    "Age": [
+      18,
+      69
+    ],
+    "LTV": [
+      0.01,
+      100
+    ],
+    "Loan_Amount": [
+      10000,
+      300000
+    ],
+    "Net_salary": [
+      0,
+      1000000
+    ]
+  },
+  "test_metrics": {
+    "accuracy": 0.658,
+    "roc_auc": 0.7654,
+    "pr_auc": 0.149,
+    "precision_approved": 0.9796,
+    "recall_approved": 0.6526,
+    "precision_declined": 0.1076,
+    "recall_declined": 0.7553,
+    "confusion_matrix": [
+      [
+        10053,
+        5352
+      ],
+      [
+        209,
+        645
+      ]
+    ],
+    "n_test": 16259.0
+  }
+}

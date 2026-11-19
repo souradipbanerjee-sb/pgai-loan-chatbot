@@ -1,0 +1,9 @@
+# secrets - never commit
+.env
+.streamlit/secrets.toml
+
+# runtime data (contains application logs)
+loan_chatbot.db
+
+__pycache__/
+.claude/
