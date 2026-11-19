@@ -3,8 +3,10 @@
 .streamlit/secrets.toml
 apps_script_ready_to_paste.gs
 
-# runtime data (contains application logs)
+# runtime data (contains application logs / applicant scores)
 loan_chatbot.db
+predictions*.csv
+*.xlsx
 
 __pycache__/
 .claude/

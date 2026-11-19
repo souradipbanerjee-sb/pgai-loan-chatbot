@@ -13,6 +13,15 @@ XGBoost model (6 features, threshold 0.50) and returns Approve / Decline with ne
 ```
 `--offline` (CLI / tests) runs without Groq. The key lives in `.env` (`GROQ_API_KEY`, `GROQ_MODEL`).
 
+## Score the hold-out set
+```powershell
+& "$env:USERPROFILE\anaconda3\python.exe" predict_holdout.py HOLDOUT.csv --out predictions.csv --audit predictions_audit.csv
+```
+Takes the raw 17-column file (CSV or Excel), applies the same preparation as training in code
+(number cleaning, Product_Code recovery from make/model, median fill), scores every row and writes
+`ID, Decision, Probability_Declined`. The audit file lists every filled, recovered or out-of-range
+value per row. If the file has a `Decision` column, accuracy / precision / recall / F1 are printed.
+
 ## Deploy on Streamlit Community Cloud
 1. Go to https://share.streamlit.io and sign in with GitHub.
 2. **Create app** → **Deploy a public app from GitHub**:

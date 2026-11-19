@@ -31,6 +31,11 @@ def _predict(rows):
     return _booster.predict(xgb.DMatrix(_frame(rows)), iteration_range=_TREES)
 
 
+def predict_batch(frame) -> np.ndarray:
+    """P(DECLINED) for a DataFrame that has the FEATURES columns (used by predict_holdout.py)."""
+    return _predict(frame[FEATURES].to_numpy(dtype="float32").tolist())
+
+
 def classify(features: dict) -> dict:
     """features: dict with every key in FEATURES (numeric / 0-1)."""
     missing = [f for f in FEATURES if f not in features]

@@ -1,0 +1,23 @@
+{
+  "_note": "Fill-in values and code maps for scoring raw applications. Medians and the PAST_LOANS_ACTIVE mode come from the cleaned training data (108,392 rows). The make/variant maps come from the Product_Code x Make_Code x Model_Variant cross-tab (21 combinations, each make belongs to one product type).",
+  "fill_values": {
+    "Age": 32,
+    "Loan_Amount": 90076,
+    "LTV": 81.33,
+    "Net_salary": 30000,
+    "PAST_LOANS_ACTIVE": 0
+  },
+  "product_codes": ["MC", "SC", "MO", "EB"],
+  "make_to_product": {
+    "APACHE": "MC", "RAIDER": "MC", "SPORT": "MC", "RADEON": "MC", "RONIN": "MC", "CITY PLUS": "MC",
+    "JUPITER": "SC", "NTORQ": "SC", "ZEST": "SC", "SCOOTY": "SC",
+    "MOPEDS": "MO",
+    "TVS": "EB"
+  },
+  "variant_keyword_to_product": {
+    "EBIKE": "EB", "XL": "MO", "SCOOTY": "SC", "NTORQ": "SC", "JUPITER": "SC",
+    "APACHE": "MC", "RTR": "MC", "RAIDER": "MC", "RADEON": "MC", "RONIN": "MC", "SPORT": "MC", "CITY PLUS": "MC"
+  },
+  "policy_age_range": [18, 60],
+  "training_ranges": {"Age": [18, 69], "LTV": [0, 99.6], "Loan_Amount": [16569, 286847], "Net_salary": [0, 980000]}
+}
